@@ -8,14 +8,19 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+from avcrawl.config import img_path
 
 BOT_NAME = 'avcrawl'
 
 SPIDER_MODULES = ['avcrawl.spiders']
 NEWSPIDER_MODULE = 'avcrawl.spiders'
 
+IMAGES_STORE = img_path
+FILES_STORE = img_path
+
 ITEM_PIPELINES = {
     'avcrawl.pipelines.DuplicatesPipeline': 300,
+    'avcrawl.pipelines.MyImagesPipeline': 400,
     'avcrawl.pipelines.MongoDBPipeline': 600,
 }
 

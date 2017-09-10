@@ -3,6 +3,7 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule
 from scrapy.spiders import Spider
 from avcrawl.items import Video
+# from avcrawl.mongomodel import Video
 
 
 class VideoSpider(Spider):
@@ -26,10 +27,35 @@ class VideoSpider(Spider):
 
         info = response.css('#video_jacket_info')
         video = Video()
-        # video = dict()
+        # video._id = info.css("div#video_id td.text::text").extract_first()
+        # video.img = info.css("#video_jacket_img::attr(src)").extract_first()
+        # video.save()
+
+        # video._id = info.css("div#video_id td.text::text").extract_first()
+        # video.title = response.css("div#video_title a::text").extract_first()
+        # video.img = info.css("#video_jacket_img::attr(src)").extract_first()
+        # if video.img:
+        #     video.img = u'http:' + video.img
+        # video.date = info.css("div#video_date td.text::text").extract_first()
+        # video.length = info.css("div#video_length span.text::text").extract_first()
+        # video.marker = info.css("div#video_length span.marker a::text").extract_first()
+        # video.label = info.css("div#video_label span.label a::text").extract_first()
+        # score = info.css("div#video_review span.score::text").extract_first()
+        # video.score = float(score[1:-1])
+        # video.type = info.css("div#video_genres span.genre a::text").extract()
+        # video.role = info.css("div#video_cast span.cast a::text").extract()
+        # video.want_num = response.css("span#subscribed a::text").extract_first()
+        # video.watch_num = response.css("span#watched a::text").extract_first()
+        # video.had_num = response.css("span#owned a::text").extract_first()
+        # video.imgs = response.css("div.previewthumbs img::attr(src)").extract()
+        # video.comments = response.css("table.comment td.t textarea::text").extract()
+
+        video = dict()
         video['_id'] = info.css("div#video_id td.text::text").extract_first()
         video['title'] = response.css("div#video_title a::text").extract_first()
         video['img'] = info.css("#video_jacket_img::attr(src)").extract_first()
+        if video['img']:
+            video['img'] = u'http:' + video['img']
         video['date'] = info.css("div#video_date td.text::text").extract_first()
         video['length'] = info.css("div#video_length span.text::text").extract_first()
         video['marker'] = info.css("div#video_length span.marker a::text").extract_first()
@@ -43,6 +69,7 @@ class VideoSpider(Spider):
         video['had_num'] = response.css("span#owned a::text").extract_first()
         video['imgs'] = response.css("div.previewthumbs img::attr(src)").extract()
         video['comments'] = response.css("table.comment td.t textarea::text").extract()
+        #prase
 
         yield video
         # return video
