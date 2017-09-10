@@ -45,32 +45,38 @@ def update_document(doc, data):
 
 def update_dynamic_doc(doc, data):
     for key, value in data.iteritems():
-        value = field_value(doc._fields[key], value)
+        if (key in doc._fields):
+            value = field_value(doc._fields[key], value)
         setattr(doc, key, value)
 
 
 class Config(DynamicDocument):
+    _id = StringField()
     pass
 
 
 class BigTag(DynamicDocument):
+    _id = StringField()
     pass
 
 
 class Tag(DynamicDocument):
+    _id = StringField()
     pass
 
 
 class Role(DynamicDocument):
+    _id = StringField()
     pass
 
 
 class Publish(DynamicDocument):
+    _id = StringField()
     pass
 
 
 class Video(DynamicDocument):
     _id = StringField()
     img = StringField()
-    type = ListField(ReferenceField(Tag))
+    # tags = ListField(ReferenceField(Tag))
     pass

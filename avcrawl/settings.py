@@ -17,6 +17,8 @@ NEWSPIDER_MODULE = 'avcrawl.spiders'
 
 IMAGES_STORE = img_path
 FILES_STORE = img_path
+FILES_EXPIRES = 365
+IMAGES_EXPIRES = 365
 
 ITEM_PIPELINES = {
     'avcrawl.pipelines.DuplicatesPipeline': 300,
@@ -28,6 +30,9 @@ MONGODB_SERVER = "localhost"
 MONGODB_PORT = 27019
 MONGODB_DB = "avproject"
 MONGODB_COLLECTION = "video"
+
+DOWNLOADER_MIDDLEWARES = {'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+                          'avcrawl.middlewares.ProxyMiddleware': 100, }
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'avcrawl (+http://www.yourdomain.com)'
@@ -69,8 +74,6 @@ ROBOTSTXT_OBEY = True
 #DOWNLOADER_MIDDLEWARES = {
 #    'avcrawl.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
-DOWNLOADER_MIDDLEWARES = {'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
-                          'avcrawl.middlewares.ProxyMiddleware': 100, }
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html

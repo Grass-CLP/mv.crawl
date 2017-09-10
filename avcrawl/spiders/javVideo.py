@@ -2,8 +2,8 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule
 from scrapy.spiders import Spider
-from avcrawl.items import Video
-# from avcrawl.mongomodel import Video
+# from avcrawl.items import Video
+from avcrawl.mongomodel import Video
 
 
 class VideoSpider(Spider):
@@ -26,7 +26,7 @@ class VideoSpider(Spider):
             f.write(response.body)
 
         info = response.css('#video_jacket_info')
-        video = Video()
+        # video = Video()
         # video._id = info.css("div#video_id td.text::text").extract_first()
         # video.img = info.css("#video_jacket_img::attr(src)").extract_first()
         # video.save()
@@ -51,6 +51,7 @@ class VideoSpider(Spider):
         # video.comments = response.css("table.comment td.t textarea::text").extract()
 
         video = dict()
+        video['_type'] = 'video'
         video['_id'] = info.css("div#video_id td.text::text").extract_first()
         video['title'] = response.css("div#video_title a::text").extract_first()
         video['img'] = info.css("#video_jacket_img::attr(src)").extract_first()
@@ -62,8 +63,38 @@ class VideoSpider(Spider):
         video['label'] = info.css("div#video_label span.label a::text").extract_first()
         score = info.css("div#video_review span.score::text").extract_first()
         video['score'] = float(score[1:-1])
-        video['type'] = info.css("div#video_genres span.genre a::text").extract()
-        video['role'] = info.css("div#video_cast span.cast a::text").extract()
+
+        #parse tags
+        tagsEle = info.css("div#video_genres span.genre")
+        tags = []
+        for t in tagsEle:
+            id = t.css("a::attr(href)").extract_first()
+            if id:
+                id = id[id.rfind('=') + 1:]
+                tag = {
+                    "_id" : id,
+                    "name" : t.css("a::text").extract_first(),
+                }
+                tags.append(tag)
+        video['tags'] = tags
+        # video['tags'] = info.css("div#video_genres span.genre a::text").extract()
+
+        # parse role
+        roleEle = info.css("span.cast")
+        roles = []
+        for r in roleEle:
+            id = r.css("span.star a::attr(href)").extract_first()
+            if id:
+                id = id[id.rfind('=') + 1:]
+                role = {
+                    "_id" : id,
+                    "name": r.css("span.star a::text").extract_first(),
+                    "alias": r.css("span.alias::text").extract_first(),
+                }
+                roles.append(role)
+        video['roles'] = roles
+
+        # video['role'] = info.css("div#video_cast span.cast a::text").extract()
         video['want_num'] = response.css("span#subscribed a::text").extract_first()
         video['watch_num'] = response.css("span#watched a::text").extract_first()
         video['had_num'] = response.css("span#owned a::text").extract_first()
