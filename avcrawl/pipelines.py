@@ -4,6 +4,8 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+import re
+
 import pymongo
 from scrapy import log
 from scrapy.conf import settings
@@ -40,8 +42,10 @@ class MyImagesPipeline(FilesPipeline):
                 yield scrapy.Request(url)
             for image_url in item['imgs']:
                 yield scrapy.Request(image_url)
-        if item['_type'] == 'role':
-            yield item
+        if item['_type'] == 'roles':
+            for star in item['data']:
+                img_url = star['img'].replace('http', 'https')
+                yield scrapy.Request(img_url)
 
     def item_completed(self, results, item, info):
         if len(results) == 0:
@@ -57,6 +61,13 @@ class MyImagesPipeline(FilesPipeline):
             # deal imgs
             file_paths = [x['path'] for ok, x in results if ok]
             item['imgs'] = file_paths
+
+        if item['_type'] == 'roles':
+            i = 0
+            roles = item['data']
+            for ok, x in results:
+                roles[i]['img'] = x['path'] if ok else ""
+                i += 1
 
         return item
 
@@ -102,6 +113,23 @@ class MongoDBPipeline(object):
             del item['roles']
             video['roles'] = roles
 
+            # deal with download
+            download = video['download'] if hasattr(video, "download") else []
+            for dl in item['comments']:
+                if dl.find('ed2k://') != -1 or dl.find('magnet:') != -1:
+                    if dl not in download:
+                        download.append(dl)
+            video['download'] = download
+
             update_dynamic_doc(video, item)
             video.save()
+
+        if item['_type'] == 'roles':
+            for rd in item['data']:
+                role = Role.objects(_id=rd['_id']).first()
+                if role is None:
+                    role = Role(_id=rd['_id'])
+                update_dynamic_doc(role, rd)
+                role.save()
+
         return item

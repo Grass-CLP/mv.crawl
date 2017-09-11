@@ -21,10 +21,6 @@ class VideoSpider(Spider):
     # )
 
     def parse(self, response):
-        filename = response.url.split("/")[-2] + '.html'
-        with open(filename, 'wb') as f:
-            f.write(response.body)
-
         info = response.css('#video_jacket_info')
         # video = Video()
         # video._id = info.css("div#video_id td.text::text").extract_first()
