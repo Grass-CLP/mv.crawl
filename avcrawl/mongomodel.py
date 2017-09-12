@@ -55,7 +55,7 @@ class Config(DynamicDocument):
     pass
 
 
-class BigTag(DynamicDocument):
+class TagGroup(DynamicDocument):
     _id = StringField()
     pass
 

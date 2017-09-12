@@ -1,26 +1,31 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import Rule
+from scrapy.spiders import Rule, CrawlSpider
 from scrapy.spiders import Spider
 # from avcrawl.items import Video
 from avcrawl.mongomodel import Video
 
 
-class VideoSpider(Spider):
+class VideoSpider(CrawlSpider):
     name = "video"
     allowed_domains = ["javlibrary.com"]
     start_urls = [
         # "http://dmoztools.net/Computers/Software/Operating_Systems/Object-Oriented",
-        "http://www.javlibrary.com/cn/?v=javlillg7i",
-        "http://www.javlibrary.com/cn/?v=javliitcze",
+        "http://www.javlibrary.com/cn/vl_bestrated.php",
+        "http://www.javlibrary.com/cn/vl_update.php",
     ]
+
+    rules = (
+        Rule(LinkExtractor(allow=('vl_bestrated\.php','vl_update\.php'))),
+        Rule(LinkExtractor(allow=('cn\/\?v=',)), callback='parse_video'),
+    )
 
     # rules = (
     #     Rule(LinkExtractor(allow=('Languages',))),
     #     Rule(LinkExtractor(allow=('Python/',)), callback='parse_item'),
     # )
 
-    def parse(self, response):
+    def parse_video(self, response):
         info = response.css('#video_jacket_info')
         # video = Video()
         # video._id = info.css("div#video_id td.text::text").extract_first()
@@ -58,22 +63,22 @@ class VideoSpider(Spider):
         video['marker'] = info.css("div#video_length span.marker a::text").extract_first()
         video['label'] = info.css("div#video_label span.label a::text").extract_first()
         score = info.css("div#video_review span.score::text").extract_first()
-        video['score'] = float(score[1:-1])
+        video['score'] = 0 if score is None else float(score[1:-1])
 
         #parse tags
-        tagsEle = info.css("div#video_genres span.genre")
-        tags = []
-        for t in tagsEle:
-            id = t.css("a::attr(href)").extract_first()
-            if id:
-                id = id[id.rfind('=') + 1:]
-                tag = {
-                    "_id" : id,
-                    "name" : t.css("a::text").extract_first(),
-                }
-                tags.append(tag)
-        video['tags'] = tags
-        # video['tags'] = info.css("div#video_genres span.genre a::text").extract()
+        # tagsEle = info.css("div#video_genres span.genre")
+        # tags = []
+        # for t in tagsEle:
+        #     id = t.css("a::attr(href)").extract_first()
+        #     if id:
+        #         id = id[id.rfind('=') + 1:]
+        #         tag = {
+        #             "_id" : id,
+        #             "name" : t.css("a::text").extract_first(),
+        #         }
+        #         tags.append(tag)
+        # video['tags'] = tags
+        video['tags'] = info.css("div#video_genres span.genre a::text").extract()
 
         # parse role
         roleEle = info.css("span.cast")

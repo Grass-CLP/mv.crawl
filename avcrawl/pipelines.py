@@ -90,16 +90,16 @@ class MongoDBPipeline(object):
                 video = Video(_id=item['_id'])
 
             # deal with tags
-            tags = []
-            for t in item['tags']:
-                tag = Tag.objects(_id=t['_id']).first()
-                if tag is None:
-                    tag = Tag(_id=t['_id'])
-                update_dynamic_doc(tag, t)
-                tag.save()
-                tags.append(tag)
-            del item['tags']
-            video['tags'] = tags
+            # tags = []
+            # for t in item['tags']:
+            #     tag = Tag.objects(_id=t['_id']).first()
+            #     if tag is None:
+            #         tag = Tag(_id=t['_id'])
+            #     update_dynamic_doc(tag, t)
+            #     tag.save()
+            #     tags.append(tag)
+            # del item['tags']
+            # video['tags'] = tags
 
             # deal with role
             roles = []
@@ -115,10 +115,16 @@ class MongoDBPipeline(object):
 
             # deal with download
             download = video['download'] if hasattr(video, "download") else []
+            comments = []
             for dl in item['comments']:
                 if dl.find('ed2k://') != -1 or dl.find('magnet:') != -1:
+                    # try to get real download
                     if dl not in download:
                         download.append(dl)
+                elif dl.find('http') == -1:
+                    # delete noise download, keep real comment
+                    comments.append(dl)
+            item['comments'] = comments
             video['download'] = download
 
             update_dynamic_doc(video, item)
@@ -131,5 +137,11 @@ class MongoDBPipeline(object):
                     role = Role(_id=rd['_id'])
                 update_dynamic_doc(role, rd)
                 role.save()
+
+        if item['_type'] == 'tags':
+            for g in item['data']:
+                tg = TagGroup(_id=g['_id'])
+                tg.tags = g['tags']
+                tg.save()
 
         return item
