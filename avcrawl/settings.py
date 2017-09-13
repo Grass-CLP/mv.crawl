@@ -40,7 +40,7 @@ DOWNLOADER_MIDDLEWARES = {'scrapy.contrib.downloadermiddleware.httpproxy.HttpPro
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 COOKIES_ENABLED = False
-DOWNLOAD_DELAY = 0.02
+DOWNLOAD_DELAY = 0
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32

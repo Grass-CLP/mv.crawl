@@ -10,13 +10,24 @@ class VideoSpider(CrawlSpider):
     name = "video"
     allowed_domains = ["javlibrary.com"]
     start_urls = [
-        # "http://dmoztools.net/Computers/Software/Operating_Systems/Object-Oriented",
+        "http://www.javlibrary.com/cn/",
+        "http://www.javlibrary.com/cn/star_mostfav.php",
+
         "http://www.javlibrary.com/cn/vl_bestrated.php",
         "http://www.javlibrary.com/cn/vl_update.php",
+
+        "http://www.javlibrary.com/cn/vl_mostwanted.php",
+        "http://www.javlibrary.com/cn/vl_newentries.php",
+        "http://www.javlibrary.com/cn/vl_newrelease.php",
+
+        "http://www.javlibrary.com/cn/genres.php",
     ]
 
     rules = (
+        Rule(LinkExtractor(allow=('vl_star\.php'))),
         Rule(LinkExtractor(allow=('vl_bestrated\.php','vl_update\.php'))),
+        Rule(LinkExtractor(allow=('vl_mostwanted\.php','vl_newentries\.php','vl_newrelease\.php'))),
+        Rule(LinkExtractor(allow=('vl_genre\.php\?'))),
         Rule(LinkExtractor(allow=('cn\/\?v=',)), callback='parse_video'),
     )
 
@@ -60,7 +71,7 @@ class VideoSpider(CrawlSpider):
             video['img'] = u'http:' + video['img']
         video['date'] = info.css("div#video_date td.text::text").extract_first()
         video['length'] = info.css("div#video_length span.text::text").extract_first()
-        video['marker'] = info.css("div#video_length span.marker a::text").extract_first()
+        video['marker'] = info.css("div#video_maker span.maker a::text").extract_first()
         video['label'] = info.css("div#video_label span.label a::text").extract_first()
         score = info.css("div#video_review span.score::text").extract_first()
         video['score'] = 0 if score is None else float(score[1:-1])

@@ -78,5 +78,6 @@ class Publish(DynamicDocument):
 class Video(DynamicDocument):
     _id = StringField()
     img = StringField()
+    # roles = ListField(ReferenceField(Role))
     # tags = ListField(ReferenceField(Tag))
     pass

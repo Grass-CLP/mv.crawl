@@ -40,8 +40,9 @@ class MyImagesPipeline(FilesPipeline):
             if item['img']:
                 url = item['img']
                 yield scrapy.Request(url)
-            for image_url in item['imgs']:
-                yield scrapy.Request(image_url)
+            # for image_url in item['imgs']:
+            #     yield scrapy.Request(image_url)
+
         if item['_type'] == 'roles':
             for star in item['data']:
                 img_url = star['img'].replace('http', 'https')
