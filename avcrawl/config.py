@@ -21,4 +21,10 @@ def saveConf(name, value):
 
 img_path = loadConf('img_path', "S:/imgs/")
 format_path = loadConf('format_path', 'S:/all_H_video/')
-wait_format_path = loadConf('wait_format_path', ['S:/all/'], force = True)
+wait_format_path = loadConf('wait_format_path',
+                            [
+                                'S:/other/',
+                                'S:/download/',
+                                'S:/package/',
+                             ],
+                            force = True)

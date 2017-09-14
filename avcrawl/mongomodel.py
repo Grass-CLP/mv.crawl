@@ -56,28 +56,38 @@ class Config(DynamicDocument):
 
 
 class TagGroup(DynamicDocument):
-    _id = StringField()
+    _id = StringField()     # may not be set
     pass
 
 
 class Tag(DynamicDocument):
-    _id = StringField()
+    _id = StringField()     # may not be set
     pass
 
 
 class Role(DynamicDocument):
-    _id = StringField()
+    _id = StringField()     # may not be set
     pass
 
 
 class Publish(DynamicDocument):
-    _id = StringField()
+    _id = StringField()     # may not be set
     pass
 
 
 class Video(DynamicDocument):
-    _id = StringField()
+    _id = StringField()     # may not be set
     img = StringField()
-    # roles = ListField(ReferenceField(Role))
+    roles = ListField(GenericReferenceField())
+    # roles_bk = ListField(ReferenceField(Role))    # for move roles
     # tags = ListField(ReferenceField(Tag))
     pass
+
+
+class fuck(DynamicDocument):
+    # _id = StringField()
+    pass
+
+class test(DynamicDocument):
+    # _id = StringField()
+    f = GenericReferenceField()
