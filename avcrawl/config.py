@@ -3,20 +3,20 @@ from avcrawl.mongomodel import Config
 
 def loadConf(name, defualt, force = False):
     if force:
-        Config(_id=name, value=defualt).save()
+        Config(code=name, value=defualt).save()
         return defualt
 
-    obj = Config.objects(_id=name).first()
+    obj = Config.objects(code=name).first()
     value = defualt
     if obj is not None:
         value = obj.value
     else:
-        Config(_id=name, value=value).save()
+        Config(code=name, value=value).save()
     return value
 
 
 def saveConf(name, value):
-    Config(_id=name, value=value).save()
+    Config(code=name, value=value).save()
 
 
 img_path = loadConf('img_path', "S:/imgs/")
@@ -26,5 +26,6 @@ wait_format_path = loadConf('wait_format_path',
                                 'S:/other/',
                                 'S:/download/',
                                 'S:/package/',
+                                # 'S:/jav/',
                              ],
                             force = True)

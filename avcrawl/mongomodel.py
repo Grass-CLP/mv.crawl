@@ -51,35 +51,35 @@ def update_dynamic_doc(doc, data):
 
 
 class Config(DynamicDocument):
-    _id = StringField()
+    code = StringField(primary_key=True)
     pass
 
 
 class TagGroup(DynamicDocument):
-    _id = StringField()     # may not be set
+    code = StringField(primary_key=True)
     pass
 
 
 class Tag(DynamicDocument):
-    _id = StringField()     # may not be set
+    code = StringField(primary_key=True)
     pass
 
 
 class Role(DynamicDocument):
-    _id = StringField()     # may not be set
+    code = StringField(primary_key=True)
     pass
 
 
 class Publish(DynamicDocument):
-    _id = StringField()     # may not be set
+    code = StringField(primary_key=True)
     pass
 
 
 class Video(DynamicDocument):
-    _id = StringField()     # may not be set
+    code = StringField(primary_key=True)
     img = StringField()
     roles = ListField(GenericReferenceField())
-    # roles_bk = ListField(ReferenceField(Role))    # for move roles
+    roles_bk = ListField(ReferenceField(Role))    # for move roles
     # tags = ListField(ReferenceField(Tag))
     pass
 

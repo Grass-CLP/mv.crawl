@@ -8,7 +8,7 @@ import winshell
 from avcrawl.config import format_path, img_path, wait_format_path
 from avcrawl.mongomodel import Video
 
-video_ext = ['mp4', 'avi', 'mkv', 'wmv', 'mov', 'mpeg', 'rmvb', 'mp3', 'flv', 'qsv', 'pdf']
+video_ext = ['mp4', 'avi', 'mkv', 'wmv', 'mov', 'mpeg', 'rmvb', 'mp3', 'flv', 'qsv']
 img_ext = ['jpg', 'jpeg']
 
 format_root = os.path.join(format_path, "all")
@@ -23,7 +23,7 @@ for v in [format_root, format_role, format_score, undefined_root]:
 
 def findVideo(name):
     video = None
-    code = re.search('([A-Z]{2,6})-?(\d{3,5})', name, re.M | re.I)
+    code = re.search('([A-Z]{2,6})-?(\d{2,5})', name, re.M | re.I)
     if code is not None:
         avcode = code.group(1).upper() + '-' + code.group(2)
         video = Video.objects(_id=avcode).first()
@@ -122,20 +122,23 @@ def loadAPath(dir, video_type=video_ext, img_type=img_ext):
                 else:
                     shutil.move(os.path.join(root.decode('gbk'), f.decode('gbk')), undefined_root)
                 pending_files.remove(f)
-            elif ext in img_ext:
-                # find key code img to move
-                video = findVideo(f)
-                if video is not None:
-                    moveAImage(video, os.path.join(root.decode('gbk'), f.decode('gbk')))
-                    pending_files.remove(f)
 
-        files = pending_files[:]
-        # if this dir only one video, move all img to format path
-        if video is not None and video_count == 1:
-            for f in files:
-                if f[f.rfind('.') + 1:] in img_ext:
-                    moveAImage(video, os.path.join(root.decode('gbk'), f.decode('gbk')))
-                    pending_files.remove(f)
+            # delete image process
+            # elif ext in img_ext:
+            #     # find key code img to move
+            #     video = findVideo(f)
+            #     if video is not None:
+            #         moveAImage(video, os.path.join(root.decode('gbk'), f.decode('gbk')))
+            #         pending_files.remove(f)
+
+        # delete image process
+        # files = pending_files[:]
+        # # if this dir only one video, move all img to format path
+        # if video is not None and video_count == 1:
+        #     for f in files:
+        #         if f[f.rfind('.') + 1:] in img_ext:
+        #             moveAImage(video, os.path.join(root.decode('gbk'), f.decode('gbk')))
+        #             pending_files.remove(f)
 
         if len(pending_files) == 0 and len(dirs) == 0:
             # shutil.rmtree(root, ignore_errors=True)
@@ -162,6 +165,32 @@ def updateLocal():
             Video.objects(_id=code).update_one(set__local_path=target_path)
 
 
+def deleteLocalEmpty():
+    # scan local files and set into video
+    # Video.objects(_id=video._id).update_one(set__local_path=target_path)
+    # format_root > files > ids
+    all_codes = os.listdir(format_root)
+    for codes in all_codes:
+        if codes == u"_Undefined":
+            continue
+
+        codePath = os.path.join(format_root, codes)
+        all_code = os.listdir(codePath)
+        if len(all_code) == 0:
+            shutil.rmtree(codePath, ignore_errors=True)
+
+        for code in all_code:
+            target_path = os.path.join(codePath, code)
+            files = os.listdir(target_path)
+            has_video = False
+            for f in files:
+                if f[f.rfind('.') + 1:] in video_ext:
+                    has_video = True
+                    break
+            if not has_video:
+                shutil.rmtree(target_path, ignore_errors=True)
+
+
 def buildShortcuts():
     # build shortcuts
     shortcut_dirs = [format_role, format_score, format_images]
@@ -175,5 +204,6 @@ def buildShortcuts():
 
 
 formatVideos()
+deleteLocalEmpty()
 updateLocal()
 buildShortcuts()
