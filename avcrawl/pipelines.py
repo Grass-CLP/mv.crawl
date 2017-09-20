@@ -27,10 +27,10 @@ class DuplicatesPipeline(object):
         self.ids_seen = set()
 
     def process_item(self, item, spider):
-        if item['_id'] in self.ids_seen:
+        if item['code'] in self.ids_seen:
             raise DropItem("Duplicate item found: %s" % item)
         else:
-            self.ids_seen.add(item['_id'])
+            self.ids_seen.add(item['code'])
             return item
 
 
@@ -86,28 +86,16 @@ class MongoDBPipeline(object):
         if type(item) != dict:
             raise DropItem('Missing{0}!'.format(item))
         if item['_type'] == 'video':
-            video = Video.objects(_id=item['_id']).first()
+            video = Video.objects(code=item['code']).first()
             if video is None:
-                video = Video(_id=item['_id'])
-
-            # deal with tags
-            # tags = []
-            # for t in item['tags']:
-            #     tag = Tag.objects(_id=t['_id']).first()
-            #     if tag is None:
-            #         tag = Tag(_id=t['_id'])
-            #     update_dynamic_doc(tag, t)
-            #     tag.save()
-            #     tags.append(tag)
-            # del item['tags']
-            # video['tags'] = tags
+                video = Video(code=item['code'])
 
             # deal with role
             roles = []
             for rd in item['roles']:
-                role = Role.objects(_id=rd['_id']).first()
+                role = Role.objects(code=rd['code']).first()
                 if role is None:
-                    role = Role(_id=rd['_id'])
+                    role = Role(code=rd['code'])
                 update_dynamic_doc(role, rd)
                 role.save()
                 roles.append(role)
@@ -133,15 +121,15 @@ class MongoDBPipeline(object):
 
         if item['_type'] == 'roles':
             for rd in item['data']:
-                role = Role.objects(_id=rd['_id']).first()
+                role = Role.objects(code=rd['code']).first()
                 if role is None:
-                    role = Role(_id=rd['_id'])
+                    role = Role(code=rd['code'])
                 update_dynamic_doc(role, rd)
                 role.save()
 
         if item['_type'] == 'tags':
             for g in item['data']:
-                tg = TagGroup(_id=g['_id'])
+                tg = TagGroup(code=g['code'])
                 tg.tags = g['tags']
                 tg.save()
 

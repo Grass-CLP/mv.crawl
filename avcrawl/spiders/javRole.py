@@ -23,13 +23,13 @@ class RoleSpider(Spider):
     def parse(self, response):
         starsEle = response.css('div.starbox div.searchitem')
         item = dict()
-        item['_id'] = "role" + time.strftime("%Y-%m-%d", time.localtime())
+        item['code'] = "role" + time.strftime("%Y-%m-%d", time.localtime())
         item['_type'] = 'roles'
         stars = []
         for starEle in starsEle:
             star = dict()
             star = {
-                "_id": starEle.css('::attr(id)').extract_first(),
+                "code": starEle.css('::attr(id)').extract_first(),
                 "rank": int(starEle.css('h3::text').extract_first()[1:]),
                 "img": starEle.css('img::attr(src)').extract_first(),
                 "name": starEle.css('img::attr(title)').extract_first(),

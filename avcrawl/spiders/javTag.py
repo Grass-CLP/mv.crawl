@@ -23,13 +23,13 @@ class TagSpider(Spider):
     def parse(self, response):
         groupsEle = response.css('div.textbox')
         item = dict()
-        item['_id'] = "tags" + time.strftime("%Y-%m-%d", time.localtime())
+        item['code'] = "tags" + time.strftime("%Y-%m-%d", time.localtime())
         item['_type'] = 'tags'
         groups = []
         for gEle in groupsEle:
             group = dict()
             group = {
-                "_id": gEle.css('div.boxtitle::text').extract_first(),
+                "code": gEle.css('div.boxtitle::text').extract_first(),
                 "tags": gEle.css('a::text').extract(),
             }
             groups.append(group)

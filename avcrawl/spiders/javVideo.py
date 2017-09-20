@@ -4,6 +4,7 @@ from scrapy.spiders import Rule, CrawlSpider
 from scrapy.spiders import Spider
 # from avcrawl.items import Video
 from avcrawl.mongomodel import Video
+from datetime import datetime
 
 
 class VideoSpider(CrawlSpider):
@@ -64,7 +65,7 @@ class VideoSpider(CrawlSpider):
 
         video = dict()
         video['_type'] = 'video'
-        video['_id'] = info.css("div#video_id td.text::text").extract_first()
+        video['code'] = info.css("div#video_id td.text::text").extract_first()
         video['title'] = response.css("div#video_title a::text").extract_first()
         video['img'] = info.css("#video_jacket_img::attr(src)").extract_first()
         if video['img']:
@@ -75,20 +76,6 @@ class VideoSpider(CrawlSpider):
         video['label'] = info.css("div#video_label span.label a::text").extract_first()
         score = info.css("div#video_review span.score::text").extract_first()
         video['score'] = 0 if score is None else float(score[1:-1])
-
-        #parse tags
-        # tagsEle = info.css("div#video_genres span.genre")
-        # tags = []
-        # for t in tagsEle:
-        #     id = t.css("a::attr(href)").extract_first()
-        #     if id:
-        #         id = id[id.rfind('=') + 1:]
-        #         tag = {
-        #             "_id" : id,
-        #             "name" : t.css("a::text").extract_first(),
-        #         }
-        #         tags.append(tag)
-        # video['tags'] = tags
         video['tags'] = info.css("div#video_genres span.genre a::text").extract()
 
         # parse role
@@ -99,7 +86,7 @@ class VideoSpider(CrawlSpider):
             if id:
                 id = id[id.rfind('=') + 1:]
                 role = {
-                    "_id" : id,
+                    "code" : id,
                     "name": r.css("span.star a::text").extract_first(),
                     "alias": r.css("span.alias::text").extract_first(),
                 }
@@ -112,7 +99,15 @@ class VideoSpider(CrawlSpider):
         video['had_num'] = response.css("span#owned a::text").extract_first()
         video['imgs'] = response.css("div.previewthumbs img::attr(src)").extract()
         video['comments'] = response.css("table.comment td.t textarea::text").extract()
-        #prase
+
+        # parse
+        def toNum(v, name):
+            v[name] = 0 if v[name] is None else int(v[name])
+        toNum(video, 'length')
+        toNum(video, 'had_num')
+        toNum(video, 'watch_num')
+        toNum(video, 'want_num')
+        video['date'] = None if video['date'] is None else datetime.strptime(video['date'], "%Y-%m-%d")
 
         yield video
         # return video

@@ -78,8 +78,9 @@ class Publish(DynamicDocument):
 class Video(DynamicDocument):
     code = StringField(primary_key=True)
     img = StringField()
-    roles = ListField(GenericReferenceField())
+    # roles = ListField(GenericReferenceField())
     roles_bk = ListField(ReferenceField(Role))    # for move roles
+    roles = ListField(ReferenceField(Role))    # for move roles
     # tags = ListField(ReferenceField(Tag))
     pass
 

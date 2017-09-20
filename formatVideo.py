@@ -6,3 +6,7 @@ for v in vs:
     v.roles = []
     v.save()
 #TODO
+
+# delete Video > roles = ListField(GenericReferenceField())
+
+
