@@ -23,6 +23,7 @@
 * 抓取tag,存储数据到mongodb，运行```scrapy crawl tag```
 * 抓取role(演员)，运行```scrapy crawl role```
 * 抓取video(重点)，配置avcrawl/spides/javVideo.py中的start_urls，运行```scrapy crawl video```
+* 调试可以使用avcrawl/run.py进行调试video抓取
 * 爬虫抓取为幂等操作，可自行修改为可自动回复上次爬虫状态
 
 ## 本地文件夹整理
