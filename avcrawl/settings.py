@@ -1,4 +1,9 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# created by Lipson on 2018/4/6.
+# email to LipsonChan@yahoo.com
+#
 
 # Scrapy settings for avcrawl project
 #
@@ -8,7 +13,7 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-from avcrawl.config import img_path
+from config import img_path, mongodb_conf
 
 BOT_NAME = 'avcrawl'
 
@@ -26,13 +31,15 @@ ITEM_PIPELINES = {
     'avcrawl.pipelines.MongoDBPipeline': 600,
 }
 
-MONGODB_SERVER = "localhost"
-MONGODB_PORT = 27019
-MONGODB_DB = "avproject"
+MONGODB_SERVER = mongodb_conf['host']
+MONGODB_PORT = mongodb_conf['port']
+MONGODB_DB = mongodb_conf['name']
 MONGODB_COLLECTION = "video"
 
-DOWNLOADER_MIDDLEWARES = {'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
-                          'avcrawl.middlewares.ProxyMiddleware': 100, }
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+    'avcrawl.middlewares.ProxyMiddleware': 100,
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'avcrawl (+http://www.yourdomain.com)'

@@ -1,18 +1,18 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# created by Lipson on 2018/4/6.
+# email to LipsonChan@yahoo.com
+#
 
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-import re
 
-import pymongo
-from scrapy import log
-from scrapy.conf import settings
+import scrapy
 from scrapy.exceptions import DropItem
 from scrapy.pipelines.files import FilesPipeline
-from scrapy.pipelines.images import ImagesPipeline
-import scrapy
 
 from avcrawl.mongomodel import *
 
@@ -75,11 +75,12 @@ class MyImagesPipeline(FilesPipeline):
 
 class MongoDBPipeline(object):
     def __init__(self):
-        connection = pymongo.MongoClient(
-            settings['MONGODB_SERVER'],
-            settings['MONGODB_PORT']
-        )
-        db = connection[settings['MONGODB_DB']]
+        # connection = pymongo.MongoClient(
+        #     settings['MONGODB_SERVER'],
+        #     settings['MONGODB_PORT']
+        # )
+        # db = connection[settings['MONGODB_DB']]
+        pass
 
     def process_item(self, item, spider):
         valid = True

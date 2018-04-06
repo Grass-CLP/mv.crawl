@@ -1,15 +1,27 @@
-from mongoengine import *
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# created by Lipson on 2018/4/6.
+# email to LipsonChan@yahoo.com
+#
+
+from mongoengine import connect, DynamicDocument
 from mongoengine.fields import *
 
-connect('avproject', host='localhost', port=27019)
+from config import mongodb_conf
+
+connect(mongodb_conf['name'], host=mongodb_conf['host'], port=mongodb_conf['port'])
 
 
 def field_value(field, value):
-    '''
+    """
     Converts a supplied value to the type required by the field.
     If the field requires a EmbeddedDocument the EmbeddedDocument
     is created and updated using the supplied data.
-    '''
+    :param field:
+    :param value:
+    :return:
+    """
     if field.__class__ in (ListField, SortedListField):
         # return a list of the field values
         return [
@@ -30,8 +42,13 @@ def field_value(field, value):
 
 
 def update_document(doc, data):
-    ''' Update an document to match the supplied dictionary.
-    '''
+    """
+    Update an document to match the supplied dictionary.
+    :param doc:
+    :param data:
+    :return:
+    """
+
     for key, value in data.iteritems():
         if hasattr(doc, key):
             value = field_value(doc._fields[key], value)
@@ -45,7 +62,7 @@ def update_document(doc, data):
 
 def update_dynamic_doc(doc, data):
     for key, value in data.iteritems():
-        if (key in doc._fields):
+        if key in doc._fields:
             value = field_value(doc._fields[key], value)
         setattr(doc, key, value)
 
@@ -78,17 +95,6 @@ class Publish(DynamicDocument):
 class Video(DynamicDocument):
     code = StringField(primary_key=True)
     img = StringField()
-    # roles = ListField(GenericReferenceField())
-    roles_bk = ListField(ReferenceField(Role))    # for move roles
-    roles = ListField(ReferenceField(Role))    # for move roles
+    roles = ListField(ReferenceField(Role))  # for move roles
     # tags = ListField(ReferenceField(Tag))
     pass
-
-
-class fuck(DynamicDocument):
-    # _id = StringField()
-    pass
-
-class test(DynamicDocument):
-    # _id = StringField()
-    f = GenericReferenceField()

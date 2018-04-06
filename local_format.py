@@ -1,12 +1,18 @@
-# coding=utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# created by Lipson on 2018/4/6.
+# email to LipsonChan@yahoo.com
+#
+
 import os
 import re
 import shutil
 
 import winshell
 
-from avcrawl.config import format_path, img_path, wait_format_path
 from avcrawl.mongomodel import Video
+from config import format_path, img_path, wait_format_path
 
 video_ext = ['mp4', 'avi', 'mkv', 'wmv', 'mov', 'mpeg', 'rmvb', 'mp3', 'flv', 'qsv']
 img_ext = ['jpg', 'jpeg']

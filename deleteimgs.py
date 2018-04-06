@@ -1,7 +1,7 @@
 import os
 
-from avcrawl.config import img_path
 from avcrawl.mongomodel import Video
+from config import img_path
 
 vs = Video.objects(imgs__gt=[])
 for video in vs:

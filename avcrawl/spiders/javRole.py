@@ -1,10 +1,13 @@
-import scrapy
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# created by Lipson on 2018/4/6.
+# email to LipsonChan@yahoo.com
+#
+
 import time
-from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import Rule
 from scrapy.spiders import Spider
-# from avcrawl.items import Video
-from avcrawl.mongomodel import Video, Role
+from avcrawl.mongomodel import Role
 
 
 class RoleSpider(Spider):
@@ -27,7 +30,6 @@ class RoleSpider(Spider):
         item['_type'] = 'roles'
         stars = []
         for starEle in starsEle:
-            star = dict()
             star = {
                 "code": starEle.css('::attr(id)').extract_first(),
                 "rank": int(starEle.css('h3::text').extract_first()[1:]),

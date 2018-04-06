@@ -1,4 +1,9 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# created by Lipson on 2018/4/6.
+# email to LipsonChan@yahoo.com
+#
 
 # Define here the models for your spider middleware
 #
@@ -6,6 +11,8 @@
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+
+from config import proxy_conf
 
 
 class AvcrawlSpiderMiddleware(object):
@@ -60,4 +67,4 @@ class ProxyMiddleware(object):
     # overwrite process request
     def process_request(self, request, spider):
         # Set the location of the proxy
-        request.meta['proxy'] = "http://127.0.0.1:49328"
+        request.meta['proxy'] = proxy_conf

@@ -1,34 +1,41 @@
-import scrapy
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# created by Lipson on 2018/4/6.
+# email to LipsonChan@yahoo.com
+#
+
+from datetime import datetime
+
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule, CrawlSpider
-from scrapy.spiders import Spider
-# from avcrawl.items import Video
-from avcrawl.mongomodel import Video
-from datetime import datetime
 
 
 class VideoSpider(CrawlSpider):
     name = "video"
     allowed_domains = ["javlibrary.com"]
     start_urls = [
-        "http://www.javlibrary.com/cn/",
-        "http://www.javlibrary.com/cn/star_mostfav.php",
-
         "http://www.javlibrary.com/cn/vl_bestrated.php",
-        "http://www.javlibrary.com/cn/vl_update.php",
-
         "http://www.javlibrary.com/cn/vl_mostwanted.php",
-        "http://www.javlibrary.com/cn/vl_newentries.php",
-        "http://www.javlibrary.com/cn/vl_newrelease.php",
 
-        "http://www.javlibrary.com/cn/genres.php",
+        # "http://www.javlibrary.com/cn/",
+        # "http://www.javlibrary.com/cn/star_mostfav.php",
+        #
+        # "http://www.javlibrary.com/cn/vl_bestrated.php",
+        # "http://www.javlibrary.com/cn/vl_update.php",
+        #
+        # "http://www.javlibrary.com/cn/vl_mostwanted.php",
+        # "http://www.javlibrary.com/cn/vl_newentries.php",
+        # "http://www.javlibrary.com/cn/vl_newrelease.php",
+        #
+        # "http://www.javlibrary.com/cn/genres.php",
     ]
 
     rules = (
-        Rule(LinkExtractor(allow=('vl_star\.php'))),
-        Rule(LinkExtractor(allow=('vl_bestrated\.php','vl_update\.php'))),
-        Rule(LinkExtractor(allow=('vl_mostwanted\.php','vl_newentries\.php','vl_newrelease\.php'))),
-        Rule(LinkExtractor(allow=('vl_genre\.php\?'))),
+        Rule(LinkExtractor(allow='vl_star\.php')),
+        Rule(LinkExtractor(allow=('vl_bestrated\.php', 'vl_update\.php'))),
+        Rule(LinkExtractor(allow=('vl_mostwanted\.php', 'vl_newentries\.php', 'vl_newrelease\.php'))),
+        Rule(LinkExtractor(allow='vl_genre\.php\?')),
         Rule(LinkExtractor(allow=('cn\/\?v=',)), callback='parse_video'),
     )
 
@@ -82,11 +89,11 @@ class VideoSpider(CrawlSpider):
         roleEle = info.css("span.cast")
         roles = []
         for r in roleEle:
-            id = r.css("span.star a::attr(href)").extract_first()
-            if id:
-                id = id[id.rfind('=') + 1:]
+            _id = r.css("span.star a::attr(href)").extract_first()
+            if _id:
+                _id = _id[_id.rfind('=') + 1:]
                 role = {
-                    "code" : id,
+                    "code": _id,
                     "name": r.css("span.star a::text").extract_first(),
                     "alias": r.css("span.alias::text").extract_first(),
                 }
@@ -103,6 +110,7 @@ class VideoSpider(CrawlSpider):
         # parse
         def toNum(v, name):
             v[name] = 0 if v[name] is None else int(v[name])
+
         toNum(video, 'length')
         toNum(video, 'had_num')
         toNum(video, 'watch_num')
@@ -135,10 +143,10 @@ class VideoSpider(CrawlSpider):
     #         url = response.urljoin(href.extract())
     #         yield scrapy.Request(url)
 
-            # def parse_dir_contents(self, response):
-            #     for sel in response.xpath('//ul/li'):
-            #         item = Website()
-            #         item['title'] = sel.xpath('a/text()').extract()
-            #         item['link'] = sel.xpath('a/@href').extract()
-            #         item['desc'] = sel.xpath('text()').extract()
-            #         yield item
+    # def parse_dir_contents(self, response):
+    #     for sel in response.xpath('//ul/li'):
+    #         item = Website()
+    #         item['title'] = sel.xpath('a/text()').extract()
+    #         item['link'] = sel.xpath('a/@href').extract()
+    #         item['desc'] = sel.xpath('text()').extract()
+    #         yield item
